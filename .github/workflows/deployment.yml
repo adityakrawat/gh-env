@@ -1,0 +1,41 @@
+name: Deployment Workflow
+on:
+  push:
+    branches:
+      - main
+      - dev
+env:
+  MONGODB_DB_NAME: gh-demo
+jobs:
+    test:
+        env:
+            MONGODB_CLUSTER_ADDRESS: aditya-mongodb-cluster.d2fkbh9.mongodb.net
+            MONGODB_USERNAME: adityarawat
+            MONGODB_PASSWORD: XRWzhNWRKiKGbsBd
+            PORT: 3000
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v6
+            - name: Cache dependencies
+              uses: actions/cache@v5
+              with:  
+                path: ~/.npm
+                key: npm-deps-${{ hashFiles('**/package-lock.json') }}
+            - name: Install dependencies
+              run: npm ci
+            - name: Run server
+              run: npm start & npx wait-on http://127.0.0.1:${PORT}
+            - name: Run tests
+              run: npm run test
+            - name: Output information
+              run: | 
+                echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+    deploy:
+        needs: test
+        runs-on: ubuntu-latest
+        steps:
+            - name: Output information
+              run: |
+                echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+                echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
