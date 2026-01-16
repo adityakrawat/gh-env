@@ -10,8 +10,8 @@ test('events creation', async ({request}) => {
     expect(response.ok()).toBeTruthy();
     const responseBody = await response.body();
     const parsedBody = JSON.parse(responseBody.toString());
-    expect(parsedBody).toHaveProperty('event.id');
-    expect(parsedBody.event.title).toBe(testTitle);
+    expect(parsedBody).toHaveProperty('eventId');
+    expect(parsedBody.eventId.title).toBe(testTitle);
 });
 
 test('events retrieval', async ({request}) => {
